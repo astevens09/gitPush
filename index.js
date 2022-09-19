@@ -31,7 +31,10 @@ let init = async ()=>{
     channel = client.createChannel('main');
     await channel.join();
 
+    //Channel event listener form `Member Joined` event
     channel.on('MemberJoined', handleUserJoined);
+
+    client.on('MessageFromPeer', handleMessageFromPeer);
 
     localStream = await navigator.mediaDevices.getUserMedia({ //getUserMedia return an object
         video:true,
@@ -41,25 +44,33 @@ let init = async ()=>{
     //Use the stream
     document.querySelector('#stream1').srcObject = localStream;
 
-    createOffer();
+    
 }
+
+//Handle function for `MessageFromPeer` event
+let handleMessageFromPeer = async (message, MemberId) =>{
+    message = JSON.parse(message.text);
+    console.log('Message: ', message);
+}
+
 
 //Handle function used for MemberJoined Event
 let handleUserJoined = async (MemberId)=>{
     console.log('A new user joined the channel', MemberId);
+    createOffer(MemberId);
 }
 
 //Create offer function or other peer
 //This interface stores all the information between the local and remote peer
 //and it provides methods to connect to that peer
-let createOffer = async ()=>{
+let createOffer = async (MemberId)=>{
     peerConnection = new RTCPeerConnection(servers);
 
     remoteStream = new MediaStream;
     document.querySelector('#stream2').srcObject = remoteStream;
 
 
-    //Get localStream audio
+    //Get localStream audio 
     localStream.getTracks().forEach((track)=>{
         peerConnection.addTrack(track, localStream);
     });
@@ -74,6 +85,7 @@ let createOffer = async ()=>{
     //Create Ice candidates
     peerConnection.onicecandidate = async (event)=>{
         if(event.candidate){
+            client.sendMessageToPeer({text: JSON.stringify({"type": 'candidate', "candidate": event.candidate})}, MemberId);
             console.log('New ice candidate: ', event.candidate)
         }
     }
@@ -82,7 +94,9 @@ let createOffer = async ()=>{
     let sessionDescription = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(sessionDescription);
 
-    console.log(peerConnection);
+    //AgoraRTM client send message to peer
+    client.sendMessageToPeer({text: JSON.stringify({"type": 'offer', "offer": sessionDescription})}, MemberId);
+
 }
 
 // function init
