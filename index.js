@@ -23,7 +23,7 @@ const servers = {
 }
 
 
-//This function ask for permission to the computer camera and microphone
+//This function connects to the stun server and establishes local stream
 let init = async ()=>{
     client = await AgoraRTM.createInstance(APP_ID);
     await client.login({uid,TOKEN});
@@ -96,12 +96,12 @@ let createPeerConnection = async (MemberId) =>{
     }
 
 
-    //Get localStream audio 
+    //Send localStream video/audio 
     localStream.getTracks().forEach((track)=>{
         peerConnection.addTrack(track, localStream);
     });
 
-    //Get remoteStream audio
+    //Get remoteStream video/audio 
     peerConnection.ontrack = (event) =>{
         event.streams[0].getTracks().forEach((track)=>{
             remoteStream.addTrack(track);
