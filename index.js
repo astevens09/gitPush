@@ -54,6 +54,7 @@ let init = async ()=>{
 let handleMessageFromPeer = async (message, MemberId) =>{
     
     message = JSON.parse(message.text);
+    console.log("MESSAGE: ", message.type);
 
     if(message.type == 'offer'){
         await createAnswer(MemberId, message.offer);
@@ -126,6 +127,7 @@ let createOffer = async (MemberId)=>{
     //Create and set session description
     let offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
+    console.log("offer created: ", MemberId);
 
     //AgoraRTM client send message to peer
     client.sendMessageToPeer({text: JSON.stringify({"type": 'offer', "offer": offer})}, MemberId);
@@ -140,6 +142,7 @@ let createAnswer = async(MemberId, offer) =>{
 
     let answer = await peerConnection.createAnswer();
     peerConnection.setLocalDescription(answer);
+    console.log("Answer created: ", MemberId);
 
     //AgoraRTM client send message to peer
     client.sendMessageToPeer({text: JSON.stringify({"type": 'answer', "answer": answer})}, MemberId);
@@ -151,6 +154,7 @@ let addAnswer = async (answer) =>{
     if(!peerConnection.currentRemoteDescription){
       await peerConnection.setRemoteDescription(answer);
     }
+
 }
 //Call init function
 init();

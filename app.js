@@ -38,7 +38,7 @@ async function init(){
 
    //Listening events
    agoraChannel.on('MemberJoined', memberJoinedHandler);
-   agoraChannel.on('MessageFromPeer', messageFromPeerHandler);
+   agoraClient.on('MessageFromPeer', messageFromPeerHandler);
 
 
    localStream = await navigator.mediaDevices.getUserMedia({
@@ -82,6 +82,7 @@ async function createPeerConnection(memberId){
       if(e.candidate){
          // console.log(e.candidate);
          agoraClient.sendMessageToPeer({text: JSON.stringify({"type": 'candidate',"candidate": e.candidate})}, memberId)
+         // console.log('New ice candidate: ', e.candidate);
       }
   }
 
@@ -124,13 +125,17 @@ async function memberJoinedHandler(memberId){
 }
 
 async function messageFromPeerHandler(message, memberId){
-   message = JSON.parse(message);
+   message = JSON.parse(message.text);
 
    if(message.type == 'offer'){
       await createAnswer(message.offer,memberId);
-   }else if(message.type == 'answer'){
+   }
+
+   if(message.type == 'answer'){
       await setAnswer(message.answer, memberId);
-   }else if( message.type == 'candidate'){
+   }
+   
+   if( message.type == 'candidate'){
       if(peerConnection){
          peerConnection.addIceCandidate(message.candidate);
       }
