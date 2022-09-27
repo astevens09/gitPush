@@ -3,7 +3,7 @@ console.log(appID);
 
 let TOKEN= "";
 let uid = String(Math.floor(Math.random()*10000));
-console.log(uid);
+// console.log(uid);
 
 //AgoraRTM client and channels
 let client;
@@ -101,7 +101,7 @@ let createPeerConnection = async (MemberId) =>{
         peerConnection.addTrack(track, localStream);
     });
 
-    //Get remoteStream video/audio 
+    
     peerConnection.ontrack = (event) =>{
         event.streams[0].getTracks().forEach((track)=>{
             remoteStream.addTrack(track);
