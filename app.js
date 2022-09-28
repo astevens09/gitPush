@@ -7,6 +7,11 @@ const APP_ID  = appID;
 const TOKEN = '';
 let uid = String(Math.floor(Math.random()*10000));
 
+//Dynamic route form room number
+let queryString = window.location.search;
+let urlParams = new URLSearchParams(queryString);
+let roomId = urlParams.get('room'); 
+
 //Media stream variables
 let localStream;
 let remoteStream;
@@ -21,7 +26,9 @@ let configuration = {
    ]
 }
 
-
+if(!roomId){
+   window.location = 'lobby.html';
+}
 
 init();
 
@@ -31,13 +38,15 @@ async function init(){
    agoraClient = AgoraRTM.createInstance(APP_ID);
    await agoraClient.login({uid, TOKEN});
 
-   //For now the channel will be main but in the future
-   //it will have a room number the can be used for a URL query string
-   agoraChannel = agoraClient.createChannel('main');
+   
+   agoraChannel = agoraClient.createChannel(roomId);
    await agoraChannel.join();
 
-   //Listening events
+   //Channel Listening events
    agoraChannel.on('MemberJoined', memberJoinedHandler);
+   agoraChannel.on('MemberLeft', memberLeftHandler);
+
+   //Client Listening events
    agoraClient.on('MessageFromPeer', messageFromPeerHandler);
 
 
@@ -55,6 +64,8 @@ async function createPeerConnection(memberId){
    //Establish stream objects and events
    remoteStream = new MediaStream;
    document.querySelector('#stream2').srcObject = remoteStream;
+   document.querySelector('#stream2').style.display = 'block';
+
 
    if(!localStream){
       localStream = await navigator.mediaDevices.getUserMedia({ //getUserMedia return an object
@@ -118,6 +129,9 @@ async function setAnswer(answer, memberId){
    }
 }
 
+/******************************************Event Listeners*******************************************/
+window.addEventListener('beforeunload', leaveChannelHandler); //event triggers before a window closes
+
 /******************************************Handler Functions*******************************************/
 async function memberJoinedHandler(memberId){
    console.log('Hello New Member!!!:',memberId);
@@ -140,4 +154,13 @@ async function messageFromPeerHandler(message, memberId){
          peerConnection.addIceCandidate(message.candidate);
       }
    }
+}
+
+function memberLeftHandler(memberId){
+   document.querySelector('#stream2').style.display = 'none';
+}
+
+async function leaveChannelHandler(){ //Funtion signs user out from signal server
+   await agoraChannel.leave();
+   await agoraClient.logout();
 }
