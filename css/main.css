@@ -13,3 +13,29 @@
 #stream2 {
     display: none;
 }
+
+.control-container{
+    background-color: cornflowerblue;
+    padding: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.control-container img{
+    height: 30px;
+    width: 30px;
+}
+
+#leave-btn{
+    background-color: firebrick;
+}
+
+#controls{
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translatex(-50%);
+}
