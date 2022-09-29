@@ -112,9 +112,13 @@ async function createOffer(memberId){
 
 async function createAnswer(offer,memberId){
    await createPeerConnection(memberId);
+   
+   peerConnection.setRemoteDescription(offer)
+   .then(()=> console.log("Remote host has set offer"))
+   .catch(err => console.log(err));
 
-   await peerConnection.setRemoteDescription(offer);
-
+   // console.log("Offer received: ", offer);
+   
    let answer = await peerConnection.createAnswer();
    await peerConnection.setLocalDescription(answer);
 
@@ -124,13 +128,18 @@ async function createAnswer(offer,memberId){
 }
 
 async function setAnswer(answer, memberId){
+   console.log("Answer Received: ", answer);
    if(!peerConnection.currentRemoteDescription){
-      await peerConnection.setRemoteDescription(answer);
+      peerConnection.setRemoteDescription(answer)
+      .then(()=> console.log("Local host has set remote description"))
+      .catch(err=> console.log(err));
    }
 }
 
 /******************************************Event Listeners*******************************************/
 window.addEventListener('beforeunload', leaveChannelHandler); //event triggers before a window closes
+document.querySelector('#camera-btn').addEventListener('click', toggleCameraHandler);
+document.querySelector('#mic-btn').addEventListener('click',toggleMicHandler);
 
 /******************************************Handler Functions*******************************************/
 async function memberJoinedHandler(memberId){
@@ -146,14 +155,15 @@ async function messageFromPeerHandler(message, memberId){
    }
 
    if(message.type == 'answer'){
+      console.log("Message received with answer");
       await setAnswer(message.answer, memberId);
    }
    
-   if( message.type == 'candidate'){
-      if(peerConnection){
-         peerConnection.addIceCandidate(message.candidate);
-      }
-   }
+   // if( message.type == 'candidate'){
+   //    if(peerConnection){
+   //       peerConnection.addIceCandidate(message.candidate);
+   //    }
+   // }
 }
 
 function memberLeftHandler(memberId){
@@ -163,4 +173,26 @@ function memberLeftHandler(memberId){
 async function leaveChannelHandler(){ //Funtion signs user out from signal server
    await agoraChannel.leave();
    await agoraClient.logout();
+}
+
+async function toggleCameraHandler(){
+   let videoTrack = localStream.getTracks().find(track =>track.kind == 'video');
+   if(videoTrack.enabled){
+      videoTrack.enabled =false;
+      document.querySelector('#camera-btn').style.backgroundColor = 'red';
+   }else{
+      videoTrack.enabled =true;
+      document.querySelector('#camera-btn').style.backgroundColor = 'cornflowerblue';
+   }
+}
+
+async function toggleMicHandler(){
+   let audioTrack = localStream.getTracks().find(track =>track.kind == 'audio');
+   if(audioTrack.enabled){
+      audioTrack.enabled =false;
+      document.querySelector('#mic-btn').style.backgroundColor = 'red';
+   }else{
+      audioTrack.enabled =true;
+      document.querySelector('#mic-btn').style.backgroundColor = 'cornflowerblue';
+   }
 }

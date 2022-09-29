@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main.css" />
     <title>gitPush</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="videoContainer">
-        <video class="player" id="stream1" autoplay playsinline></video>
-        <video class="player" id="stream2" autoplay playsinline></video>
+      <video class="player" id="stream1" autoplay playsinline></video>
+      <video class="player" id="stream2" autoplay playsinline></video>
     </div>
 
     <div id="controls">
+      <div class="control-container" id="camera-btn">
+        <img src="icons/camera.png" />
+      </div>
 
-        <div class="control-container" id="camera-btn">
-            <img src="icons/camera.png" >
-        </div>
-
-        <div class="control-container" id="mic-btn">
-            <img src="icons/mic.png" >
-        </div>
-
+      <div class="control-container" id="mic-btn">
+        <img src="icons/mic.png" />
+      </div>
+      <a href="lobby.html">
         <div class="control-container" id="leave-btn">
-            <img src="icons/phone.png" >
+          <img src="icons/phone.png" />
         </div>
-
+      </a>
     </div>
-</body>
-<script src="appID.js"></script>
-<script src="agora-rtm-sdk-1.5.1.js"></script>
-<script src="app.js"></script>
-<!-- <script src="index.js"></script> -->
-
+  </body>
+  <script src="appID.js"></script>
+  <script src="agora-rtm-sdk-1.5.1.js"></script>
+  <script src="app.js"></script>
+  <!-- <script src="index.js"></script> -->
 </html>

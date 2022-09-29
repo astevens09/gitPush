@@ -38,4 +38,6 @@
     bottom: 20px;
     left: 50%;
     transform: translatex(-50%);
+    display: flex;
+    gap: 1em;
 }
