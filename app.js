@@ -32,7 +32,6 @@ if(!roomId){
 
 init();
 
-
 /******************************************Functions*******************************************/
 async function init(){
    agoraClient = AgoraRTM.createInstance(APP_ID);
@@ -66,11 +65,14 @@ async function createPeerConnection(memberId){
    document.querySelector('#stream2').srcObject = remoteStream;
    document.querySelector('#stream2').style.display = 'block';
 
+   //Change local video frame to smaller size
+   document.querySelector('#stream1').classList.add('smallFrame');
+
 
    if(!localStream){
       localStream = await navigator.mediaDevices.getUserMedia({ //getUserMedia return an object
           video:true,
-          audio:false
+          audio:true
       });
   
       //Use the stream
@@ -159,11 +161,11 @@ async function messageFromPeerHandler(message, memberId){
       await setAnswer(message.answer, memberId);
    }
    
-   // if( message.type == 'candidate'){
-   //    if(peerConnection){
-   //       peerConnection.addIceCandidate(message.candidate);
-   //    }
-   // }
+   if( message.type == 'candidate'){
+      if(peerConnection){
+         peerConnection.addIceCandidate(message.candidate);
+      }
+   }
 }
 
 function memberLeftHandler(memberId){
@@ -173,6 +175,7 @@ function memberLeftHandler(memberId){
 async function leaveChannelHandler(){ //Funtion signs user out from signal server
    await agoraChannel.leave();
    await agoraClient.logout();
+   document.querySelector('#stream1').classList.remove('smallFrame');
 }
 
 async function toggleCameraHandler(){
