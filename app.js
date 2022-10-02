@@ -15,6 +15,14 @@ let roomId = urlParams.get('room');
 //Media stream variables
 let localStream;
 let remoteStream;
+let mediaConstraints = {
+   // video: true,
+   video:{
+      width:{min:640, ideal: 1920, max:1920},
+      height:{min:480, ideal: 1080, max:1080},
+   },
+   audio: true
+}
 
 //WebRtc vars
 let peerConnection;
@@ -49,10 +57,7 @@ async function init(){
    agoraClient.on('MessageFromPeer', messageFromPeerHandler);
 
 
-   localStream = await navigator.mediaDevices.getUserMedia({
-      audio:true,
-      video: true
-   });
+   localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
    document.querySelector('#stream1').srcObject = localStream;
 }

@@ -63,3 +63,10 @@
     display: flex;
     gap: 1em;
 }
+
+@media screen and (max-width: 600px) {
+    .smallFrame{
+        height: 80px;
+        width: 120px;
+    }
+}
