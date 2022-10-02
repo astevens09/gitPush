@@ -170,12 +170,13 @@ async function messageFromPeerHandler(message, memberId){
 
 function memberLeftHandler(memberId){
    document.querySelector('#stream2').style.display = 'none';
+   document.querySelector('#stream1').classList.remove('smallFrame');
 }
 
 async function leaveChannelHandler(){ //Funtion signs user out from signal server
+   
    await agoraChannel.leave();
    await agoraClient.logout();
-   document.querySelector('#stream1').classList.remove('smallFrame');
 }
 
 async function toggleCameraHandler(){
